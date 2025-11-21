@@ -1,4 +1,5 @@
 package br.com.infox.telas;
+import java.awt.Color;
 import java.sql.*;
 import javax.swing.JOptionPane;
 
@@ -31,6 +32,10 @@ public class TelaLogin extends javax.swing.JFrame {
             if (rs.next()){
                 TelaPrincipal principal = new TelaPrincipal();
                 principal.setVisible(true);
+                TelaPrincipal.lblUsuario.setText(rs.getString(2));
+                if(rs.getString(6).equals("admin")){
+                    TelaPrincipal.lblUsuario.setForeground(Color.RED);
+                }
                 this.dispose();
                 conexao.close();
             } else {
