@@ -2,6 +2,8 @@ package br.com.infox.telas;
 import java.text.DateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 public class TelaPrincipal extends javax.swing.JFrame{
 
     public TelaPrincipal(){
@@ -55,9 +57,11 @@ public class TelaPrincipal extends javax.swing.JFrame{
         menCad.add(menCadOS);
         menCadUsu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menCadUsu.setText("Usuário");
+        menCadUsu.setEnabled(false);
         menCad.add(menCadUsu);
         menu.add(menCad);
         menRel.setText("Relatório");
+        menRel.setEnabled(false);
         menRelSer.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menRelSer.setText("Serviços");
         menRel.add(menRelSer);
@@ -65,11 +69,21 @@ public class TelaPrincipal extends javax.swing.JFrame{
         menAju.setText("Ajuda");
         menAjuSob.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menAjuSob.setText("Sobre");
+        menAjuSob.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                menAjuSobActionPerformed(evt);
+            }
+        });
         menAju.add(menAjuSob);
         menu.add(menAju);
         menOpc.setText("Opções");
         menOpcSai.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menOpcSai.setText("Sair");
+        menOpcSai.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                menOpcSaiActionPerformed(evt);
+            }
+        });
         menOpc.add(menOpcSai);
         menu.add(menOpc);
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/logo.png")));
@@ -131,6 +145,20 @@ public class TelaPrincipal extends javax.swing.JFrame{
         lblData.setText(formatador.format(data));
     }
 
+    private void menAjuSobActionPerformed(java.awt.event.ActionEvent evt){
+        TelaSobre sobre = new TelaSobre();
+        sobre.setVisible(true);
+    }
+
+    private void menOpcSaiActionPerformed(java.awt.event.ActionEvent evt){
+        int sair = JOptionPane.showConfirmDialog(null,"Tem certeza que deseja sair?", "Atenção", JOptionPane.YES_NO_OPTION);
+        if (sair == JOptionPane.YES_OPTION){
+            TelaLogin login = new TelaLogin();
+            login.setVisible(true);
+            this.dispose();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         
         try {
@@ -160,9 +188,9 @@ public class TelaPrincipal extends javax.swing.JFrame{
     private javax.swing.JMenuBar menu;
     private javax.swing.JMenu menCad;
     private javax.swing.JMenuItem menCadCli;
-    private javax.swing.JMenuItem menCadUsu;
+    public static javax.swing.JMenuItem menCadUsu;
     private javax.swing.JMenuItem menCadOS;
-    private javax.swing.JMenu menRel;
+    public static javax.swing.JMenu menRel;
     private javax.swing.JMenuItem menRelSer;
     private javax.swing.JMenu menAju;
     private javax.swing.JMenuItem menAjuSob;
