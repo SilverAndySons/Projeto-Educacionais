@@ -57,6 +57,11 @@ public class TelaPrincipal extends javax.swing.JFrame{
         menCad.add(menCadOS);
         menCadUsu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menCadUsu.setText("Usuário");
+        menCadUsu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                menCadUsuActionPerformed(evt);
+            }
+        });
         menCadUsu.setEnabled(false);
         menCad.add(menCadUsu);
         menu.add(menCad);
@@ -157,6 +162,12 @@ public class TelaPrincipal extends javax.swing.JFrame{
             login.setVisible(true);
             this.dispose();
         }
+    }
+
+    private void menCadUsuActionPerformed(java.awt.event.ActionEvent evt){
+        TelaUsuario usuario = new TelaUsuario();
+        usuario.setVisible(true);
+        desktop.add(usuario);
     }
 
     public static void main(String[] args) throws Exception {
