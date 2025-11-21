@@ -1,6 +1,5 @@
 package br.com.infox.telas;
 import java.sql.*;
-import javax.swing.GroupLayout;
 import javax.swing.JOptionPane;
 
 import br.com.infox.dal.ModuloConexao;
@@ -62,6 +61,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(400,190));
+        setTitle("X System - Login");
         setResizable(false);
 
         btnLogin.setText("Login");
