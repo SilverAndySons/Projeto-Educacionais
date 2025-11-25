@@ -68,11 +68,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                 int add = pst.executeUpdate();
                 if (add > 0) {
                     JOptionPane.showMessageDialog(null, "Usuário Cadastrado com Sucesso!");
-                    txtUsuNome.setText(null);
-                    txtUsuFone.setText(null);
-                    txtUsuLogin.setText(null);
-                    txtUsuSenha.setText(null);
-                    txtUsuID.setText(null);
+                    limpar();
                 }
             }
         } catch (Exception e) {
@@ -97,11 +93,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                 int add = pst.executeUpdate();
                 if (add > 0) {
                     JOptionPane.showMessageDialog(null, "Usuário Modificado com Sucesso!");
-                    txtUsuNome.setText(null);
-                    txtUsuFone.setText(null);
-                    txtUsuLogin.setText(null);
-                    txtUsuSenha.setText(null);
-                    txtUsuID.setText(null);
+                    limpar();
                 }
             }
         } catch (Exception e) {
@@ -119,16 +111,20 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                 int add = pst.executeUpdate();
                 if (add > 0){
                     JOptionPane.showMessageDialog(null, "Usuário Removido com Sucesso!");
-                    txtUsuNome.setText(null);
-                    txtUsuFone.setText(null);
-                    txtUsuLogin.setText(null);
-                    txtUsuSenha.setText(null);
-                    txtUsuID.setText(null);
+                    limpar();
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
             }
         }
+    }
+    
+    private void limpar(){
+        txtUsuNome.setText(null);
+        txtUsuFone.setText(null);
+        txtUsuLogin.setText(null);
+        txtUsuSenha.setText(null);
+        txtUsuID.setText(null);
     }
 
     /**
