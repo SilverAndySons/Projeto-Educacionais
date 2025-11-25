@@ -162,6 +162,34 @@ public class TelaOS extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    private void excluir_os(){
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir essa OS?", "Atenção", JOptionPane.YES_NO_OPTION);
+        if(confirma == JOptionPane.YES_OPTION){
+            String sql = "DELETE FROM tbos WHERE os=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtOSnum.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0){
+                    JOptionPane.showMessageDialog(null, "OS Excluído com Sucesso!");
+                    txtOSnum.setText(null);
+                    txtOSData.setText(null);
+                    txtOSidCliente.setText(null);
+                    txtOSequipamento.setText(null);
+                    txtOSdefeito.setText(null);
+                    txtOSservico.setText(null);
+                    txtOStecnico.setText(null);
+                    txtOStotal.setText("0");
+                    btnOScreate.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblOScliente.setVisible(true);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -549,6 +577,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
     private void btnOSdeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSdeleteActionPerformed
         // TODO add your handling code here:
+        excluir_os();
     }//GEN-LAST:event_btnOSdeleteActionPerformed
 
     private void txtCliPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCliPesquisarKeyReleased
