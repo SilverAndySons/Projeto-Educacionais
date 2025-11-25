@@ -4,18 +4,44 @@
  * and open the template in the editor.
  */
 package br.com.infox.telas;
+import java.sql.*;
+import br.com.infox.dal.ModuloConexao;
+import javax.swing.JOptionPane;
+import net.proteanit.sql.DbUtils;
 
 /**
  *
  * @author Anderson
  */
 public class TelaOS extends javax.swing.JInternalFrame {
+    
+    Connection conexao = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
 
     /**
      * Creates new form TelaOS
      */
     public TelaOS() {
         initComponents();
+        conexao = ModuloConexao.conector();
+    }
+    
+    private void pesquisar_cli(){
+        String sql = "SELECT idcli as ID,nomecli as Nome,fonecli as Telefone FROM tbclientes WHERE nomecli LIKE ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtCliPesquisar.getText() + "%");
+            rs = pst.executeQuery();
+            tblOScliente.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+    private void setar_campos(){
+        int setar = tblOScliente.getSelectedRow();
+        txtOSidCliente.setText(tblOScliente.getModel().getValueAt(setar, 0).toString());
     }
 
     /**
@@ -38,7 +64,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
         jLabel3 = new javax.swing.JLabel();
         cboOSsituacao = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
-        txtOScliente = new javax.swing.JTextField();
+        txtCliPesquisar = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtOSidCliente = new javax.swing.JTextField();
@@ -135,10 +161,18 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
 
+        txtCliPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCliPesquisarKeyReleased(evt);
+            }
+        });
+
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/search.png"))); // NOI18N
 
         jLabel5.setText("* ID");
         jLabel5.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        txtOSidCliente.setEditable(false);
 
         tblOScliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -148,6 +182,11 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 "ID", "Nome", "Telefone"
             }
         ));
+        tblOScliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblOSclienteMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblOScliente);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -159,7 +198,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtOScliente, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCliPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
@@ -173,7 +212,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
-                    .addComponent(txtOScliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCliPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtOSidCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -368,6 +407,16 @@ public class TelaOS extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnOSdeleteActionPerformed
 
+    private void txtCliPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCliPesquisarKeyReleased
+        // TODO add your handling code here:
+        pesquisar_cli();
+    }//GEN-LAST:event_txtCliPesquisarKeyReleased
+
+    private void tblOSclienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOSclienteMouseClicked
+        // TODO add your handling code here:
+        setar_campos();
+    }//GEN-LAST:event_tblOSclienteMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOScreate;
@@ -393,8 +442,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton rbtnOS;
     private javax.swing.JRadioButton rbtnOrcamento;
     private javax.swing.JTable tblOScliente;
+    private javax.swing.JTextField txtCliPesquisar;
     private javax.swing.JTextField txtOSData;
-    private javax.swing.JTextField txtOScliente;
     private javax.swing.JTextField txtOSdefeito;
     private javax.swing.JTextField txtOSequipamento;
     private javax.swing.JTextField txtOSidCliente;
