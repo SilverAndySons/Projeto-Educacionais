@@ -126,6 +126,42 @@ public class TelaOS extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e2);
         }
     }
+    
+    private void alterar_os(){
+        String sql = "UPDATE tbos SET tipo=?,situacao=?,equipamento=?,defeito=?,servico=?,tecnico=?,valor=? WHERE os=?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOSsituacao.getSelectedItem().toString());
+            pst.setString(3, txtOSequipamento.getText());
+            pst.setString(4, txtOSdefeito.getText());
+            pst.setString(5, txtOSservico.getText());
+            pst.setString(6, txtOStecnico.getText());
+            pst.setString(7, txtOStotal.getText().replaceAll(",", "."));
+            pst.setString(8, txtOSnum.getText());
+            if (txtOSequipamento.getText().isEmpty() || txtOSdefeito.getText().isEmpty() || txtOSidCliente.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Preencha os Campos Obrigatórios!");
+            } else {
+                int add = pst.executeUpdate();
+                if (add > 0) {
+                    JOptionPane.showMessageDialog(null, "OS Modificado com Sucesso!");
+                    txtOSnum.setText(null);
+                    txtOSData.setText(null);
+                    txtOSidCliente.setText(null);
+                    txtOSequipamento.setText(null);
+                    txtOSdefeito.setText(null);
+                    txtOSservico.setText(null);
+                    txtOStecnico.setText(null);
+                    txtOStotal.setText("0");
+                    btnOScreate.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblOScliente.setVisible(true);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -508,6 +544,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
     private void btnOSupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSupdateActionPerformed
         // TODO add your handling code here:
+        alterar_os();
     }//GEN-LAST:event_btnOSupdateActionPerformed
 
     private void btnOSdeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSdeleteActionPerformed
