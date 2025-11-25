@@ -77,6 +77,55 @@ public class TelaOS extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    private void pesquisar_os(){
+        String num_os = JOptionPane.showInputDialog("Número da OS");
+        String sql = "SELECT * FROM tbos WHERE os=" + num_os;
+        try {
+            pst = conexao.prepareStatement(sql);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                txtOSnum.setText(rs.getString(1));
+                txtOSData.setText(rs.getString(2));
+                String rbtnTipo = rs.getString(3);
+                if (rbtnTipo.equals("OS")) {
+                    rbtnOS.setSelected(true);
+                    tipo="OS";
+                } else {
+                    rbtnOrcamento.setSelected(true);
+                    tipo="Orçamento";
+                }
+                cboOSsituacao.setSelectedItem(rs.getString(4));
+                txtOSequipamento.setText(rs.getString(5));
+                txtOSdefeito.setText(rs.getString(6));
+                txtOSservico.setText(rs.getString(7));
+                txtOStecnico.setText(rs.getString(8));
+                txtOStotal.setText(rs.getString(9));
+                txtOSidCliente.setText(rs.getString(10));
+                btnOScreate.setEnabled(false);
+                txtCliPesquisar.setEnabled(false);
+                tblOScliente.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "OS não Cadastrado!");
+            }
+        } catch (java.sql.SQLSyntaxErrorException e) {
+            JOptionPane.showMessageDialog(null, "OS Inválida!");
+            txtOSnum.setText(null);
+            txtOSData.setText(null);
+            txtOSidCliente.setText(null);
+            txtOSequipamento.setText(null);
+            txtOSdefeito.setText(null);
+            txtOSservico.setText(null);
+            txtOStecnico.setText(null);
+            txtOStotal.setText("0");
+            btnOScreate.setEnabled(true);
+            txtCliPesquisar.setEnabled(true);
+            tblOScliente.setVisible(true);
+            //System.out.println(e);
+        } catch (Exception e2) {
+            JOptionPane.showMessageDialog(null, e2);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -177,17 +226,18 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(rbtnOrcamento)
                         .addGap(18, 18, 18)
-                        .addComponent(rbtnOS)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(rbtnOS))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(txtOSnum, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtOSnum, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(txtOSData, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(31, 31, 31))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 107, Short.MAX_VALUE))
+                            .addComponent(txtOSData))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -349,12 +399,12 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(cboOSsituacao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18)
+                                .addComponent(cboOSsituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -453,6 +503,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
     private void btnOSreadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSreadActionPerformed
         // TODO add your handling code here:
+        pesquisar_os();
     }//GEN-LAST:event_btnOSreadActionPerformed
 
     private void btnOSupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSupdateActionPerformed
