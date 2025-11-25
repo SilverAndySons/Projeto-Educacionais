@@ -4,9 +4,11 @@
  * and open the template in the editor.
  */
 package br.com.infox.telas;
+
 import java.sql.*;
 import br.com.infox.dal.ModuloConexao;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -14,11 +16,11 @@ import net.proteanit.sql.DbUtils;
  * @author Anderson
  */
 public class TelaOS extends javax.swing.JInternalFrame {
-    
+
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
-    
+
     private String tipo;
 
     /**
@@ -28,8 +30,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
         initComponents();
         conexao = ModuloConexao.conector();
     }
-    
-    private void pesquisar_cli(){
+
+    private void pesquisar_cli() {
         String sql = "SELECT idcli as ID,nomecli as Nome,fonecli as Telefone FROM tbclientes WHERE nomecli LIKE ?";
         try {
             pst = conexao.prepareStatement(sql);
@@ -40,13 +42,13 @@ public class TelaOS extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void setar_campos(){
+
+    private void setar_campos() {
         int setar = tblOScliente.getSelectedRow();
         txtOSidCliente.setText(tblOScliente.getModel().getValueAt(setar, 0).toString());
     }
-    
-    private void emitir_os(){
+
+    private void emitir_os() {
         String sql = "INSERT INTO tbos(tipo,situacao,equipamento,defeito,servico,tecnico,valor,idcli) VALUES (?,?,?,?,?,?,?,?)";
         try {
             pst = conexao.prepareStatement(sql);
@@ -58,29 +60,26 @@ public class TelaOS extends javax.swing.JInternalFrame {
             pst.setString(6, txtOStecnico.getText());
             pst.setString(7, txtOStotal.getText().replaceAll(",", "."));
             pst.setString(8, txtOSidCliente.getText());
-            if (txtOSequipamento.getText().isEmpty() || txtOSdefeito.getText().isEmpty() || txtOSidCliente.getText().isEmpty()) {
+            if (txtOSequipamento.getText().isEmpty() || txtOSdefeito.getText().isEmpty() || txtOSidCliente.getText().isEmpty() || cboOSsituacao.getSelectedItem().equals(" ")) {
                 JOptionPane.showMessageDialog(null, "Preencha os Campos Obrigatórios!");
             } else {
 
                 int add = pst.executeUpdate();
                 if (add > 0) {
                     JOptionPane.showMessageDialog(null, "OS Emitido com Sucesso!");
-                    txtOSidCliente.setText(null);
-                    txtOSequipamento.setText(null);
-                    txtOSdefeito.setText(null);
-                    txtOSservico.setText(null);
-                    txtOStecnico.setText(null);
-                    txtOStotal.setText("0");
+                    btnOScreate.setEnabled(false);
+                    btnOSread.setEnabled(false);
+                    btnOSprint.setEnabled(true);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void pesquisar_os(){
+
+    private void pesquisar_os() {
         String num_os = JOptionPane.showInputDialog("Número da OS");
-        String sql = "SELECT * FROM tbos WHERE os=" + num_os;
+        String sql = "SELECT os,date_format(data_os,\"%d/%m/%Y - %H:%i\"),tipo,situacao,equipamento,defeito,servico,tecnico,valor,idcli FROM tbos WHERE os=" + num_os;
         try {
             pst = conexao.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -90,10 +89,10 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 String rbtnTipo = rs.getString(3);
                 if (rbtnTipo.equals("OS")) {
                     rbtnOS.setSelected(true);
-                    tipo="OS";
+                    tipo = "OS";
                 } else {
                     rbtnOrcamento.setSelected(true);
-                    tipo="Orçamento";
+                    tipo = "Orçamento";
                 }
                 cboOSsituacao.setSelectedItem(rs.getString(4));
                 txtOSequipamento.setText(rs.getString(5));
@@ -105,29 +104,23 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 btnOScreate.setEnabled(false);
                 txtCliPesquisar.setEnabled(false);
                 tblOScliente.setVisible(false);
+                btnOSread.setEnabled(false);
+                btnOSdelete.setEnabled(true);
+                btnOSupdate.setEnabled(true);
+                btnOSprint.setEnabled(true);
             } else {
                 JOptionPane.showMessageDialog(null, "OS não Cadastrado!");
             }
         } catch (java.sql.SQLSyntaxErrorException e) {
             JOptionPane.showMessageDialog(null, "OS Inválida!");
-            txtOSnum.setText(null);
-            txtOSData.setText(null);
-            txtOSidCliente.setText(null);
-            txtOSequipamento.setText(null);
-            txtOSdefeito.setText(null);
-            txtOSservico.setText(null);
-            txtOStecnico.setText(null);
-            txtOStotal.setText("0");
-            btnOScreate.setEnabled(true);
-            txtCliPesquisar.setEnabled(true);
-            tblOScliente.setVisible(true);
+            limpar();
             //System.out.println(e);
         } catch (Exception e2) {
             JOptionPane.showMessageDialog(null, e2);
         }
     }
-    
-    private void alterar_os(){
+
+    private void alterar_os() {
         String sql = "UPDATE tbos SET tipo=?,situacao=?,equipamento=?,defeito=?,servico=?,tecnico=?,valor=? WHERE os=?";
         try {
             pst = conexao.prepareStatement(sql);
@@ -139,56 +132,57 @@ public class TelaOS extends javax.swing.JInternalFrame {
             pst.setString(6, txtOStecnico.getText());
             pst.setString(7, txtOStotal.getText().replaceAll(",", "."));
             pst.setString(8, txtOSnum.getText());
-            if (txtOSequipamento.getText().isEmpty() || txtOSdefeito.getText().isEmpty() || txtOSidCliente.getText().isEmpty()) {
+            if (txtOSequipamento.getText().isEmpty() || txtOSdefeito.getText().isEmpty() || txtOSidCliente.getText().isEmpty() || cboOSsituacao.getSelectedItem().equals(" ")) {
                 JOptionPane.showMessageDialog(null, "Preencha os Campos Obrigatórios!");
             } else {
                 int add = pst.executeUpdate();
                 if (add > 0) {
                     JOptionPane.showMessageDialog(null, "OS Modificado com Sucesso!");
-                    txtOSnum.setText(null);
-                    txtOSData.setText(null);
-                    txtOSidCliente.setText(null);
-                    txtOSequipamento.setText(null);
-                    txtOSdefeito.setText(null);
-                    txtOSservico.setText(null);
-                    txtOStecnico.setText(null);
-                    txtOStotal.setText("0");
-                    btnOScreate.setEnabled(true);
-                    txtCliPesquisar.setEnabled(true);
-                    tblOScliente.setVisible(true);
+                    limpar();
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-    private void excluir_os(){
+
+    private void excluir_os() {
         int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir essa OS?", "Atenção", JOptionPane.YES_NO_OPTION);
-        if(confirma == JOptionPane.YES_OPTION){
+        if (confirma == JOptionPane.YES_OPTION) {
             String sql = "DELETE FROM tbos WHERE os=?";
             try {
                 pst = conexao.prepareStatement(sql);
                 pst.setString(1, txtOSnum.getText());
                 int apagado = pst.executeUpdate();
-                if (apagado > 0){
+                if (apagado > 0) {
                     JOptionPane.showMessageDialog(null, "OS Excluído com Sucesso!");
-                    txtOSnum.setText(null);
-                    txtOSData.setText(null);
-                    txtOSidCliente.setText(null);
-                    txtOSequipamento.setText(null);
-                    txtOSdefeito.setText(null);
-                    txtOSservico.setText(null);
-                    txtOStecnico.setText(null);
-                    txtOStotal.setText("0");
-                    btnOScreate.setEnabled(true);
-                    txtCliPesquisar.setEnabled(true);
-                    tblOScliente.setVisible(true);
+                    limpar();
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
             }
         }
+    }
+
+    private void limpar() {
+        txtOSnum.setText(null);
+        txtOSData.setText(null);
+        txtOSidCliente.setText(null);
+        txtOSequipamento.setText(null);
+        txtOSdefeito.setText(null);
+        txtOSservico.setText(null);
+        txtOStecnico.setText(null);
+        txtOStotal.setText("0");
+        txtCliPesquisar.setText(null);
+        btnOScreate.setEnabled(true);
+        txtCliPesquisar.setEnabled(true);
+        tblOScliente.setVisible(true);
+        ((DefaultTableModel) tblOScliente.getModel()).setRowCount(0);
+        cboOSsituacao.setSelectedItem(" ");
+        btnOSdelete.setEnabled(false);
+        btnOSprint.setEnabled(false);
+        btnOSupdate.setEnabled(false);
+        btnOSread.setEnabled(true);
     }
 
     /**
@@ -299,7 +293,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(0, 107, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtOSData))))
                 .addContainerGap())
         );
@@ -321,9 +315,9 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jLabel3.setText("Situação");
+        jLabel3.setText("* Situação");
 
-        cboOSsituacao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Na Bancada", "Entrega OK", "Orçamento REPROVADO", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo Cliente", "Retornou" }));
+        cboOSsituacao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { " ", "Na Bancada", "Entrega OK", "Orçamento REPROVADO", "Aguardando Aprovação", "Aguardando Peças", "Abandonado pelo Cliente", "Retornou" }));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
 
@@ -430,6 +424,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
         btnOSupdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/update.png"))); // NOI18N
         btnOSupdate.setToolTipText("Alterar");
         btnOSupdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOSupdate.setEnabled(false);
         btnOSupdate.setMaximumSize(new java.awt.Dimension(84, 84));
         btnOSupdate.setMinimumSize(new java.awt.Dimension(84, 84));
         btnOSupdate.setPreferredSize(new java.awt.Dimension(84, 84));
@@ -442,6 +437,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
         btnOSdelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/delete.png"))); // NOI18N
         btnOSdelete.setToolTipText("Remover");
         btnOSdelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOSdelete.setEnabled(false);
         btnOSdelete.setMaximumSize(new java.awt.Dimension(84, 84));
         btnOSdelete.setMinimumSize(new java.awt.Dimension(84, 84));
         btnOSdelete.setPreferredSize(new java.awt.Dimension(84, 84));
@@ -453,6 +449,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
         btnOSprint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/printer.png"))); // NOI18N
         btnOSprint.setToolTipText("Imprimir");
+        btnOSprint.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -593,7 +590,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
         // TODO add your handling code here:
         rbtnOrcamento.setSelected(true);
-        tipo = "Orçamento"; 
+        tipo = "Orçamento";
     }//GEN-LAST:event_formInternalFrameOpened
 
 
